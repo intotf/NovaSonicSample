@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static void AddBedrockClient(this IServiceCollection services)
         {
-            //注册OpenAi 抽象的 AmazonBedrockRuntimeClient
+            //注册 AmazonBedrockRuntimeClient
             services.AddSingleton(s =>
             {
                 var option = s.GetRequiredService<IOptions<AmazonOptions>>().Value;

@@ -51,6 +51,9 @@ namespace NovaSonicApp.Services
         /// <returns></returns>
         public async Task SonicChatAsync(string message)
         {
+
+            var mp3 = File.ReadAllBytes("whatai.mp3");
+
             //请求参数
             var request = new InvokeModelWithBidirectionalStreamRequest
             {
@@ -60,7 +63,7 @@ namespace NovaSonicApp.Services
                     await Task.Delay(5000);
                     var model = new BidirectionalInputPayloadPart
                     {
-                        Bytes = new MemoryStream(Encoding.UTF8.GetBytes(message))
+                        Bytes = new MemoryStream(mp3)
                     };
                     logger.LogInformation("发送数据:" + Encoding.UTF8.GetString(model.Bytes.ToArray()));
                     return model;
@@ -69,6 +72,21 @@ namespace NovaSonicApp.Services
 
             //请求NovaSonic 模型
             var result = await runtimeClient.InvokeModelWithBidirectionalStreamAsync(request);
+
+
+            result.Body.ChunkReceived += (sender, e) =>
+            {
+                using var reader = new StreamReader(e.EventStreamEvent.Bytes);
+                var content = reader.ReadToEnd();
+                logger.LogInformation("接收块:" + content);
+            };
+
+            result.Body.InitialResponseReceived += (sender, e) =>
+            {
+                using var reader = new StreamReader(e.EventStreamEvent.Payload);
+                var json = reader.ReadToEnd();
+                logger.LogInformation("初始响应:" + json);
+            };
 
             result.Body.ExceptionReceived += (sender, e) =>
             {
