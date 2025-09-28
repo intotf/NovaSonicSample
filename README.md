@@ -18,17 +18,13 @@ http://localhost:5666/sonic/swagger/index.html
 
 
 # AmazonBedrockRuntimeClient 注册
- /// <summary>
- /// 注册 bedrock 服务
- /// </summary>
- /// <param name="services"></param>
- /// <returns></returns>
- public static void AddBedrockClient(this IServiceCollection services)
- {
-     //注册 AmazonBedrockRuntimeClient
-     services.AddSingleton(s =>
-     {
-         var option = s.GetRequiredService<IOptions<AmazonOptions>>().Value;
-         return new AmazonBedrockRuntimeClient(option.AccessKeyId, option.SecretAccessKey, RegionEndpoint.GetBySystemName(option.RegionEndpoint));
-     });
- }
+
+\src\NovaSonicApp\Extensions\ServiceCollectionExtensions.cs 文件注册
+ 
+```
+  services.AddSingleton(s =>
+  {
+      var option = s.GetRequiredService<IOptions<AmazonOptions>>().Value;
+      return new AmazonBedrockRuntimeClient(option.AccessKeyId, option.SecretAccessKey, RegionEndpoint.GetBySystemName(option.RegionEndpoint));
+  });
+```
